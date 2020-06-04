@@ -1,5 +1,4 @@
 import pygame as pg
-from Tiles import Tile
 
 #base class for map objects that store maps
 class Map:

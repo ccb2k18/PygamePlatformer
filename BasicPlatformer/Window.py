@@ -1,5 +1,5 @@
 import pygame as pg
-from Tiles import Tile
+from Tiles import Tile, StaticTile
 from Maps import Map
 from Entities import Character, Player
 from GameEngine import PhysicsEngine
@@ -28,7 +28,8 @@ class Application:
         #initialize screen
         self.screen = pg.display.set_mode(size=(self.width, self.height))
         pg.display.set_caption("Basic Platformer")
-        self.sampleMap = Map(tilesDict={str(i):Tile(i, height-32, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(0, width, 32)}, player=Player(width//2, height-96, 1))
+        self.sampleMap = Map(tilesDict={str(i):StaticTile(i, height-32, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(0, width, 32)}, player=Player(width//2, height-96, 1))
+        self.sampleMap.tilesDict.update({str(i+width):StaticTile(i, height-192, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(384, 640, 32)})
         #physics engine
         self.engine = PhysicsEngine(myMap=self.sampleMap)
         #game clock to cap fps

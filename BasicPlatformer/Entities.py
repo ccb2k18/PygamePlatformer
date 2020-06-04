@@ -1,7 +1,7 @@
 import pygame as pg
 import math
 import time
-
+PURPLE = (255, 0, 255, 255)
 #class for a player
 class Character:
 
@@ -14,7 +14,7 @@ class Character:
         self.w = 0
         self.h = 0
         #center coordinates for collision detection
-        self.cx = self.x - self.w//2
+        self.cx = self.x + self.w//2
         self.cy = self.y + self.h//2
         #change in x
         self.velocity = 0
@@ -43,6 +43,9 @@ class Character:
         self.loadSpriteList("moveLeft", "moveLeft/", 1, 9, 3)
         self.loadSpriteList("meleeRight", "meleeRight/", 1, 6, 2)
         self.loadSpriteList("meleeLeft", "meleeLeft/", 1, 6, 2)
+        self.loadSpriteList("jumpRight", "jumpRight/", 0, 2, 1)
+        self.loadSpriteList("jumpLeft", "jumpLeft/", 0, 2, 1)
+
 
         #current sprite key that will be used in draw
         self.currentKey = "idleRight"
@@ -131,15 +134,15 @@ class Player(Character):
                 #we stopped moving in the right direction
                 self.right = False
                 self.stoppedRight = True
-                self.index = 0
-                self.currentKey = "idleRight"
+                # self.index = 0
+                # self.currentKey = "idleRight"
 
             if event.key == pg.K_a:
                 #we stopped moving in the left direction
                 self.left = False
                 self.stoppedLeft = True
-                self.index = 0
-                self.currentKey = "idleLeft"
+                # self.index = 0
+                # self.currentKey = "idleLeft"
                 
             if event.key == pg.K_SPACE:
 
@@ -151,13 +154,15 @@ class Player(Character):
         if ((self.right or self.left or self.meleeRight or self.meleeLeft) and self.onGround):
 
             self.index += 1
+        #if we are moving right or left
         if (self.right or self.left):
 
             self.index %= 24
-
+        #if we are melee attacking
         if (self.meleeRight or self.meleeLeft):
 
             self.index %= 10
+
         #get the current sprite and it's destination rect to blit to screen
         #try and except block in case the player switches keys too fast
         try:
@@ -191,8 +196,9 @@ class Player(Character):
         self.y += self.fallVelocity
 
         #update center of sprite every draw cycle
-        self.cx = self.x - self.w//2
+        self.cx = self.x + self.w//2
         self.cy = self.y + self.h//2
+        #pg.draw.rect(screen, PURPLE, (self.cx-5, self.cy, 5, 5))
 
         
 

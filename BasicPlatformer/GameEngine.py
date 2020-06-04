@@ -43,6 +43,7 @@ class PhysicsEngine:
 
             #if the player stopped right then stopped left should be false
             player.stoppedLeft = False
+            #player.left = False
             #if the player is still moving right
             if player.velocity > 0:
                 #slowly slow down the player
@@ -52,11 +53,16 @@ class PhysicsEngine:
 
                 player.velocity = 0
                 player.stoppedRight = False
+                if not player.left:
+                    #set sprite to idle
+                    player.index = 0
+                    player.currentKey = "idleRight"
         #if the player stopped moving left
         #follows same formula as stopped right
         if player.stoppedLeft:
             #if the player stopped left then stopped right should be false
             player.stoppedRight = False
+            #player.right = False
             if player.velocity < 0:
 
                 player.velocity += player.deceleration
@@ -64,28 +70,37 @@ class PhysicsEngine:
 
                 player.velocity = 0
                 player.stoppedLeft = False
+                if not player.right:
+                    #set sprite to idle
+                    player.index = 0
+                    player.currentKey = "idleLeft"
     #check if the player center x coord is between a tile
     def playerCenterXInBetweenTile(self, tile):
 
         player = self.myMap.player
         #if the center x coord of the player is in between the tile return True 
-        if player.cx > tile.x and player.cx < tile.x + tile.w:
+        if (player.cx > tile.x - player.w//2) and (player.cx < tile.x + tile.w + player.w//2):
 
             return True
 
     #detect if the player is on the ground, and if so adjust player parameters
-    def detectPlayerGrounded(self):
+    def detectPlayerGrounded(self, tile):
 
         player = self.myMap.player
-        tiles = self.myMap.tilesDict
-        for key in tiles.keys():
-            #if the tile is in close proximity to the player
-            if tiles[key].inPlayerRange(player):
-                #if the center x of player is in between tile and the bottom of the player is past the tile surface
-                if self.playerCenterXInBetweenTile(tiles[key]) and (player.y + player.h) >= tiles[key].y:
-                    player.fallVelocity = 0
-                    player.y = tiles[key].y - player.h
-                    player.onGround = True
+        #if the tile is in close proximity to the player
+        if tile.inPlayerRange(player):
+            #if the center x of player is in between tile and the bottom of the player is past the tile surface
+            #but only half the player's height is past the tile
+            if self.playerCenterXInBetweenTile(tile) and ((player.y + player.h) >= tile.y) and \
+                (player.y + player.h) - tile.y < player.h//2:
+                player.fallVelocity = 0
+                player.y = tile.y - player.h
+                player.onGround = True
+
+    #detects if the player is jumping from below the tile and colliding
+    def detectPlayerTileCollisionBelow(self):
+
+        pass
 
 
     def applyPlayerJump(self):
@@ -122,5 +137,11 @@ class PhysicsEngine:
         self.removePlayerVelocity()
         self.applyPlayerJump()
         self.applyPlayerGravity()
-        self.detectPlayerGrounded()
+        player = self.myMap.player
+        player.onGround = False
+        #do various collision checks for all tiles in range of player
+        tiles = self.myMap.tilesDict
+        for key in tiles.keys():
+
+            self.detectPlayerGrounded(tiles[key])
 

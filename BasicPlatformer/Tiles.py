@@ -1,5 +1,7 @@
 import pygame as pg
 
+RED = (255, 0, 0, 255)
+GREEN = (0, 255, 0, 255)
 #base class for game tiles
 class Tile:
 
@@ -45,3 +47,19 @@ class Tile:
         self.rect.x = self.x
         self.rect.y = self.y
         screen.blit(self.image, self.rect)
+        #pg.draw.rect(screen, RED, (self.x, self.y, 5, 5))
+        #pg.draw.rect(screen, GREEN, (self.x+self.w-5, self.y, 5, 5))
+
+#tiles that don't move and aren't affected by physics
+class StaticTile(Tile):
+
+    def __init__(self, *args, **kwargs):
+
+        super(StaticTile, self).__init__(*args, **kwargs)
+
+
+class Platform(Tile):
+
+    def __init__(self, *args, **kwargs):
+
+        super(Platform, self).__init__(*args, **kwargs)
