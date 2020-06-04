@@ -198,7 +198,7 @@ class Player(Character):
         #update center of sprite every draw cycle
         self.cx = self.x + self.w//2
         self.cy = self.y + self.h//2
-        #pg.draw.rect(screen, PURPLE, (self.cx-5, self.cy, 5, 5))
+        pg.draw.rect(screen, PURPLE, (self.cx-5, self.cy, 5, 5))
 
         
 

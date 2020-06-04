@@ -31,12 +31,12 @@ class Tile:
             return True
         return False
 
-    #checks if the tile is in the player's range
-    def inPlayerRange(self, player):
+    #checks if the tile is in the character's range
+    def inCharacterRange(self, character):
 
-        #if the tile is within 4 player widths of the player and 4 player heights then return True
-        if self.x > player.cx - player.w*4 and self.x < player.cx + player.w*4 and \
-            self.y > player.cy - player.h*4 and self.y < player.cy + player.h*4:
+        #if the tile is within 4 character widths of the character and 4 character heights then return True
+        if self.x > character.cx - character.w*4 and self.x < character.cx + character.w*4 and \
+            self.y > character.cy - character.h*4 and self.y < character.cy + character.h*4:
 
             return True
 
@@ -47,8 +47,8 @@ class Tile:
         self.rect.x = self.x
         self.rect.y = self.y
         screen.blit(self.image, self.rect)
-        #pg.draw.rect(screen, RED, (self.x, self.y, 5, 5))
-        #pg.draw.rect(screen, GREEN, (self.x+self.w-5, self.y, 5, 5))
+        pg.draw.rect(screen, RED, (self.x, self.y, 5, 5))
+        pg.draw.rect(screen, GREEN, (self.x+self.w-5, self.y, 5, 5))
 
 #tiles that don't move and aren't affected by physics
 class StaticTile(Tile):

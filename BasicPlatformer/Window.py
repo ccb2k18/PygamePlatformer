@@ -28,8 +28,10 @@ class Application:
         #initialize screen
         self.screen = pg.display.set_mode(size=(self.width, self.height))
         pg.display.set_caption("Basic Platformer")
-        self.sampleMap = Map(tilesDict={str(i):StaticTile(i, height-32, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(0, width, 32)}, player=Player(width//2, height-96, 1))
+        self.sampleMap = Map(tilesDict={str(i):StaticTile(i, height-32, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(0, width, 32)}, player=Player(200, height-96, 1))
         self.sampleMap.tilesDict.update({str(i+width):StaticTile(i, height-192, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(384, 640, 32)})
+        self.sampleMap.tilesDict.update({str(i+(width*2)):StaticTile(i, height-160, 0.333, path="assets/sprites/forest/forestDirt.png") for i in range(384, 640, 32)})
+        self.sampleMap.tilesDict.update({str(i+(width*4)):StaticTile(576, i, 0.333, path="assets/sprites/forest/forestDirt.png") for i in range(height-96, height-32, 32)})
         #physics engine
         self.engine = PhysicsEngine(myMap=self.sampleMap)
         #game clock to cap fps
