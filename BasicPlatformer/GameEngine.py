@@ -82,14 +82,14 @@ class PhysicsEngine:
     def characterBottomInBetweenTile(self, tile, character):
 
         #if the bottom of the player is in between a tile
-        if character.y + character.h >= tile.y and character.y + character.h <= tile.y + tile.h:
+        if character.y + character.h > tile.y and character.y + character.h < tile.y + tile.h:
 
             return True
 
     def characterTopInBetweenTile(self, tile, character):
 
         #if the top of the player is in between a tile
-        if character.y >= tile.y and character.y <= tile.y + tile.h:
+        if character.y > tile.y and character.y < tile.y + tile.h:
 
             return True
 
@@ -101,7 +101,7 @@ class PhysicsEngine:
             #if the center x of character is in between tile and the bottom of the character is past the tile surface
             #but only half the character's height is past the tile
             if self.characterCenterXInBetweenTile(tile, character) and ((character.y + character.h) >= tile.y) and \
-                (character.y + character.h) - tile.y < character.h//4:
+                abs((character.y + character.h) - tile.y) < character.h//4:
                 character.fallVelocity = 0
                 character.y = tile.y - character.h
                 character.onGround = True
@@ -123,13 +123,27 @@ class PhysicsEngine:
 
     def handleCharacterTileCollisionLeft(self, tile, character):
 
-        if (self.characterBottomInBetweenTile(tile, character) or self.characterTopInBetweenTile(tile, character)) and \
-            (character.x < tile.x + tile.w) and abs((tile.x + tile.w) - character.x) < character.h//4:
+        if not isinstance(tile, Platform):
+        
+            if (self.characterTopInBetweenTile(tile, character) or self.characterBottomInBetweenTile(tile, character)) and \
+                (character.x > tile.x - character.w) and abs(character.x - (tile.x-character.w)) < character.w//4:
 
-            character.velocity = 0
-            character.left = False
-            character.stoppedLeft = False
-            character.x = tile.x + tile.w
+                character.velocity = 0
+                character.left = False
+                character.stoppedLeft = False
+                character.x = tile.x - character.w
+
+    def handleCharacterTileCollisionRight(self, tile, character):
+
+        if not isinstance(tile, Platform):
+        
+            if (self.characterTopInBetweenTile(tile, character) or self.characterBottomInBetweenTile(tile, character)) and \
+                (character.x < tile.x + tile.w) and abs((tile.x + tile.w) - character.x) < character.w//4:
+
+                character.velocity = 0
+                character.left = False
+                character.stoppedLeft = False
+                character.x = tile.x + tile.w
 
 
 
@@ -159,7 +173,7 @@ class PhysicsEngine:
                 character.fallVelocity = character.maxFallVelocity
 
     
-    def update(self):
+    def update(self, screen):
 
         player = self.myMap.player
         #apply the physical forces of the world on the character
@@ -174,5 +188,7 @@ class PhysicsEngine:
 
             self.detectCharacterGrounded(tiles[key], player)
             self.handleCharacterTileCollisionBelow(tiles[key], player)
-            #self.handleCharacterTileCollisionLeft(tiles[key], player)
+            self.handleCharacterTileCollisionLeft(tiles[key], player)
+            self.handleCharacterTileCollisionRight(tiles[key], player)
+        #print(self.characterTopInBetweenTile(player))
 

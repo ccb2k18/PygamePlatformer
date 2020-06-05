@@ -25,7 +25,7 @@ class Character:
         #jump velocity and jump acceleration
         self.jumpVelocity = 0
         self.jumpAccel = 0.5
-        self.maxJumpVelocity = -4
+        self.maxJumpVelocity = -3.5
         #causes drifting when player stops moving left or right
         self.acceleration = 0.2
         self.deceleration = 0.1
@@ -198,7 +198,9 @@ class Player(Character):
         #update center of sprite every draw cycle
         self.cx = self.x + self.w//2
         self.cy = self.y + self.h//2
-        pg.draw.rect(screen, PURPLE, (self.cx-5, self.cy, 5, 5))
+        # pg.draw.rect(screen, PURPLE, (self.x, self.y, 5, 5))
+        # pg.draw.rect(screen, PURPLE, (self.cx-5, self.cy, 5, 5))
+        # pg.draw.rect(screen, PURPLE, (self.x + self.w - 5, self.y + self.h - 5, 5, 5))
 
         
 
