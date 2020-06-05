@@ -18,11 +18,10 @@ class Map:
 
     def draw(self, screen):
 
+        #tiles are drawn in physics engine object
         for key in self.tilesDict.keys():
 
-            if self.tilesDict[key].onScreen(screen.get_width(), screen.get_height()):
-
-                self.tilesDict[key].draw(screen)
+            self.tilesDict[key].draw(screen)
 
         self.player.draw(screen)
         

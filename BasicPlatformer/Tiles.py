@@ -47,8 +47,10 @@ class Tile:
         self.rect.x = self.x
         self.rect.y = self.y
         screen.blit(self.image, self.rect)
-        pg.draw.rect(screen, RED, (self.x, self.y, 5, 5))
-        pg.draw.rect(screen, GREEN, (self.x+self.w-5, self.y, 5, 5))
+        # pg.draw.rect(screen, GREEN, (self.x, self.y, 5, 5))
+        # pg.draw.rect(screen, GREEN, (self.x+self.w-5, self.y, 5, 5))
+        # pg.draw.rect(screen, GREEN, (self.x, self.y+self.h-5, 5, 5))
+        # pg.draw.rect(screen, GREEN, (self.x+self.w-5, self.y+self.h-5, 5, 5))
 
 #tiles that don't move and aren't affected by physics
 class StaticTile(Tile):

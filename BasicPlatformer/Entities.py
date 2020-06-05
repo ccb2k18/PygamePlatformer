@@ -55,6 +55,8 @@ class Character:
         #booleans to determine if moving left or right
         self.right = False
         self.left = False
+        #down determines if the s key has been pressed
+        self.down = False
         #booleans that tell if player stopped moving left or right
         self.stoppedRight = False
         self.stoppedLeft = False
@@ -100,53 +102,63 @@ class Player(Character):
 
         super(Player, self).__init__(*args, **kwargs)
 
-    #handle user input
-    def handleEvents(self, event):
+    def handleKeyPressed(self, event):
 
-        if event.type == pg.KEYDOWN:
+        #if D is pressed
+        if event.key == pg.K_d:
+            #set every action to false except move right
+            self.right = True
+            self.left = False
+            self.meleeRight = False
+            self.meleeLeft = False
+            self.currentKey = "moveRight"
 
-            #if D is pressed
-            if event.key == pg.K_d:
-                #set every action to false except move right
-                self.right = True
-                self.left = False
-                self.meleeRight = False
-                self.meleeLeft = False
-                self.currentKey = "moveRight"
+        if event.key == pg.K_a:
+            #set every action to false except move left
+            self.right = False
+            self.left = True
+            self.meleeRight = False
+            self.meleeLeft = False
+            self.currentKey = "moveLeft"
 
-            if event.key == pg.K_a:
-                #set every action to false except move left
-                self.right = False
-                self.left = True
-                self.meleeRight = False
-                self.meleeLeft = False
-                self.currentKey = "moveLeft"
+        if event.key == pg.K_s:
 
-            if event.key == pg.K_SPACE:
+            self.down = True
 
-                if self.onGround:
+        if event.key == pg.K_SPACE:
 
-                    self.jump = True
+            if self.onGround:
 
-        if event.type == pg.KEYUP:
+                self.jump = True
 
-            if event.key == pg.K_d:
+
+    def handleKeyReleased(self, event):
+
+        if event.key == pg.K_d:
                 #we stopped moving in the right direction
                 self.right = False
                 self.stoppedRight = True
                 # self.index = 0
                 # self.currentKey = "idleRight"
 
-            if event.key == pg.K_a:
-                #we stopped moving in the left direction
-                self.left = False
-                self.stoppedLeft = True
-                # self.index = 0
-                # self.currentKey = "idleLeft"
-                
-            if event.key == pg.K_SPACE:
+        if event.key == pg.K_a:
+            #we stopped moving in the left direction
+            self.left = False
+            self.stoppedLeft = True
+            # self.index = 0
+            # self.currentKey = "idleLeft"
 
-                pass
+    #handle user input
+    def handleEvents(self, event):
+
+        if event.type == pg.KEYDOWN:
+
+            self.handleKeyPressed(event)
+        if event.type == pg.KEYUP:
+
+            self.handleKeyReleased(event)
+
+
 
     #draw the player
     def draw(self, screen):
@@ -199,8 +211,10 @@ class Player(Character):
         self.cx = self.x + self.w//2
         self.cy = self.y + self.h//2
         # pg.draw.rect(screen, PURPLE, (self.x, self.y, 5, 5))
+        # pg.draw.rect(screen, PURPLE, (self.x+self.w-5, self.y, 5, 5))
         # pg.draw.rect(screen, PURPLE, (self.cx-5, self.cy, 5, 5))
         # pg.draw.rect(screen, PURPLE, (self.x + self.w - 5, self.y + self.h - 5, 5, 5))
+        # pg.draw.rect(screen, PURPLE, (self.x, self.y+self.h-5, 5, 5))
 
         
 

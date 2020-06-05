@@ -1,5 +1,5 @@
 import pygame as pg
-from Tiles import Tile, StaticTile
+from Tiles import Tile, StaticTile, Platform
 from Maps import Map
 from Entities import Character, Player
 from GameEngine import PhysicsEngine
@@ -31,7 +31,11 @@ class Application:
         self.sampleMap = Map(tilesDict={str(i):StaticTile(i, height-32, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(0, width, 32)}, player=Player(200, height-96, 1))
         self.sampleMap.tilesDict.update({str(i+width):StaticTile(i, height-192, 0.333, path="assets/sprites/forest/forestGrass.png") for i in range(384, 640, 32)})
         self.sampleMap.tilesDict.update({str(i+(width*2)):StaticTile(i, height-160, 0.333, path="assets/sprites/forest/forestDirt.png") for i in range(384, 640, 32)})
-        self.sampleMap.tilesDict.update({str(i+(width*4)):StaticTile(576, i, 0.333, path="assets/sprites/forest/forestDirt.png") for i in range(height-96, height-32, 32)})
+        del self.sampleMap.tilesDict["1760"]
+        del self.sampleMap.tilesDict["3040"]
+        self.sampleMap.tilesDict.update({"WoodPlatform":Platform(480, height-128, 0.333, path="assets/sprites/carpentry/singleWoodenPlatformBothSides.png")})
+        self.sampleMap.tilesDict.update({"WoodPlatformLeft":StaticTile(448, height-128, 0.333, path="assets/sprites/forest/forestDirt.png")})
+        self.sampleMap.tilesDict.update({"WoodPlatformRight":StaticTile(512, height-128, 0.333, path="assets/sprites/forest/forestDirt.png")})
         #physics engine
         self.engine = PhysicsEngine(myMap=self.sampleMap)
         #game clock to cap fps
@@ -51,7 +55,7 @@ class Application:
     #updates physics and camera position
     def update(self):
 
-        self.engine.update()
+        self.engine.update(self.screen)
     #draws sprites and graphics on screen
     def draw(self):
 
@@ -59,8 +63,6 @@ class Application:
         self.screen.fill(SKYBLUE)
         #draw the map
         self.sampleMap.draw(self.screen)
-        #flip display
-        pg.display.flip()
     #main game loop
     def loop(self):
 
@@ -70,6 +72,8 @@ class Application:
             self.handleEvents()
             self.update()
             self.draw()
+            #flip display
+            pg.display.flip()
 
     def exit(self):
 

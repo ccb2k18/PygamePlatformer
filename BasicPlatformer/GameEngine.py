@@ -82,7 +82,7 @@ class PhysicsEngine:
     def characterBottomInBetweenTile(self, tile, character):
 
         #if the bottom of the player is in between a tile
-        if character.y + character.h > tile.y and character.y + character.h < tile.y + tile.h:
+        if character.y + character.h > tile.y and character.y + character.h <= tile.y + tile.h:
 
             return True
 
@@ -96,15 +96,29 @@ class PhysicsEngine:
     #detect if the character is on the ground, and if so adjust character parameters
     def detectCharacterGrounded(self, tile, character):
 
-        #if the tile is in close proximity to the character
-        if tile.inCharacterRange(character):
-            #if the center x of character is in between tile and the bottom of the character is past the tile surface
-            #but only half the character's height is past the tile
-            if self.characterCenterXInBetweenTile(tile, character) and ((character.y + character.h) >= tile.y) and \
-                abs((character.y + character.h) - tile.y) < character.h//4:
-                character.fallVelocity = 0
-                character.y = tile.y - character.h
-                character.onGround = True
+        if not isinstance(tile, Platform):
+            #if the tile is in close proximity to the character
+            if tile.inCharacterRange(character):
+                #if the center x of character is in between tile and the bottom of the character is past the tile surface
+                #but only half the character's height is past the tile
+                if self.characterCenterXInBetweenTile(tile, character) and ((character.y + character.h) >= tile.y) and \
+                    abs((character.y + character.h) - tile.y) < character.h//4:
+                    character.fallVelocity = 0
+                    character.y = tile.y - character.h
+                    character.onGround = True
+        else:
+
+            #if the tile is in close proximity to the character
+            if tile.inCharacterRange(character):
+                #if the center x of character is in between tile and the bottom of the character is past the tile surface
+                #but only half the character's height is past the tile
+                if self.characterCenterXInBetweenTile(tile, character) and ((character.y + character.h) >= tile.y) and \
+                    abs((character.y + character.h) - tile.y) < character.h//8:
+                    character.fallVelocity = 0
+                    character.y = tile.y - character.h
+                    character.onGround = True
+
+
 
     #handles if the character is jumping from below the tile and colliding
     def handleCharacterTileCollisionBelow(self, tile, character):
@@ -120,7 +134,7 @@ class PhysicsEngine:
                 character.jump = False
                 character.fallVelocity = 0
                 character.y = tile.y + tile.h
-
+    #check if the character is colliding with a tile from the left
     def handleCharacterTileCollisionLeft(self, tile, character):
 
         if not isinstance(tile, Platform):
@@ -132,7 +146,7 @@ class PhysicsEngine:
                 character.left = False
                 character.stoppedLeft = False
                 character.x = tile.x - character.w
-
+    #check if the character is colliding with a tile from the right
     def handleCharacterTileCollisionRight(self, tile, character):
 
         if not isinstance(tile, Platform):
@@ -144,7 +158,16 @@ class PhysicsEngine:
                 character.left = False
                 character.stoppedLeft = False
                 character.x = tile.x + tile.w
+    
+    def characterFallThroughPlatform(self, tile, character):
 
+        if isinstance(tile, Platform):
+
+            if self.characterCenterXInBetweenTile(tile, character) and (character.y + character.h == tile.y) and \
+                character.down:
+
+                character.y = character.y + character.h//4
+                character.down = False 
 
 
     def applyCharacterJump(self, character):
@@ -190,5 +213,6 @@ class PhysicsEngine:
             self.handleCharacterTileCollisionBelow(tiles[key], player)
             self.handleCharacterTileCollisionLeft(tiles[key], player)
             self.handleCharacterTileCollisionRight(tiles[key], player)
+            self.characterFallThroughPlatform(tiles[key], player)
         #print(self.characterTopInBetweenTile(player))
 
