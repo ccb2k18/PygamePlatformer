@@ -5,9 +5,39 @@ import time
 
 class GameCamera:
 
-    def __init__(self):
+    def __init__(self, player, centerX=640, centerY=480, sensitivity=1):
 
-        pass
+        self.sW = 1280
+        self.sH = 720
+        self.lowerX = centerX-(player.w*(10//sensitivity))
+        self.lowerY = centerY-(player.h*(10//sensitivity))
+        self.upperX = centerX+(player.w*(10//sensitivity))
+        self.upperY = centerY+(player.h*(10//sensitivity))
+        self.changeX = 0
+        self.changeY = 0
+
+    def shiftPlayerX(self, player):
+
+        if player.x < self.lowerX or player.x > self.upperX:
+
+            player.x += -player.velocity
+            self.changeX = -player.velocity
+            return
+        self.changeX = 0
+
+    def shiftPlayerY(self, player):
+
+        if player.y < self.lowerY or player.y > self.upperY:
+
+            player.y += -player.fallVelocity
+            self.changeY = -player.fallVelocity
+            return
+        self.changeY = 0
+
+    def shiftTile(self, tile):
+
+        tile.x += self.changeX
+        tile.y += self.changeY
 
 class PhysicsEngine:
 
@@ -16,6 +46,8 @@ class PhysicsEngine:
         self.myMap = myMap
         #gravity that acts upon all characters and dynamic tiles
         self.gravity = gravity
+        #camera to shift point of view
+        self.camera = GameCamera(self.myMap.player)
     #apply the proper velocity to move the character
     def applyCharacterVelocity(self, character):
 
@@ -113,7 +145,7 @@ class PhysicsEngine:
                 #if the center x of character is in between tile and the bottom of the character is past the tile surface
                 #but only half the character's height is past the tile
                 if self.characterCenterXInBetweenTile(tile, character) and ((character.y + character.h) >= tile.y) and \
-                    abs((character.y + character.h) - tile.y) < character.h//8:
+                    abs((character.y + character.h) - tile.y) < character.h//4 and character.fallVelocity > 0:
                     character.fallVelocity = 0
                     character.y = tile.y - character.h
                     character.onGround = True
@@ -199,6 +231,11 @@ class PhysicsEngine:
     def update(self, screen):
 
         player = self.myMap.player
+        #shift camera point of view
+        self.camera.changeX = 0
+        self.camera.changeY = 0
+        self.camera.shiftPlayerX(player)
+        self.camera.shiftPlayerY(player)
         #apply the physical forces of the world on the character
         self.applyCharacterVelocity(player)
         self.removeCharacterVelocity(player)
@@ -209,6 +246,7 @@ class PhysicsEngine:
         tiles = self.myMap.tilesDict
         for key in tiles.keys():
 
+            self.camera.shiftTile(tiles[key])
             self.detectCharacterGrounded(tiles[key], player)
             self.handleCharacterTileCollisionBelow(tiles[key], player)
             self.handleCharacterTileCollisionLeft(tiles[key], player)
